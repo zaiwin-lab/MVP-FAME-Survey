@@ -8,9 +8,20 @@ import { MagicBox } from './screens/MagicBox';
 import { Processing, Review } from './screens/Submit';
 import { ReportView } from './screens/ReportView';
 import { ThankYou } from './screens/ThankYou';
+import { FloatingBubbles } from './components/FloatingBubbles';
+import { I18nProvider, useI18n } from './i18n';
 import { useSession } from './state/store';
 
 export default function App() {
+  return (
+    <I18nProvider>
+      <Journey />
+    </I18nProvider>
+  );
+}
+
+function Journey() {
+  const { t } = useI18n();
   const {
     state,
     patch,
@@ -35,7 +46,7 @@ export default function App() {
         href="#main"
         className="no-print sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-brand focus:px-4 focus:py-2 focus:text-white"
       >
-        Skip to content
+        {t('skip')}
       </a>
       <Header onHome={goHome} />
 
@@ -144,6 +155,8 @@ export default function App() {
       {/* The survey and processing screens own the full viewport; a footer
           under their sticky bars reads as a stray strip. */}
       {state.stage !== 'survey' && state.stage !== 'processing' && <Footer />}
+
+      <FloatingBubbles lifted={state.stage === 'survey'} />
     </div>
   );
 }

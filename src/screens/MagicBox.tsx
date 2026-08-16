@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Button, Eyebrow, Note } from '../components/ui';
+import { useI18n } from '../i18n';
 import { extractAssets, mergeAssets, platformLabel } from '../lib/magicbox';
 import type { AssetPlatform, BusinessContext, DetectedAsset } from '../types';
 
@@ -20,9 +21,7 @@ const PLATFORM_OPTIONS: AssetPlatform[] = [
   'other',
 ];
 
-const PLACEHOLDER = `Paste anything here. For example:
-
-www.mybusiness.com.my
+const PLACEHOLDER_LINES = `www.mybusiness.com.my
 facebook.com/mybusinesskch
 @mybusiness_kch
 https://maps.app.goo.gl/xxxxx
@@ -43,6 +42,7 @@ export function MagicBox({
   onBack: () => void;
   onNext: () => void;
 }) {
+  const { t } = useI18n();
   const [paste, setPaste] = useState('');
   const preview = useMemo(() => (paste.trim() ? extractAssets(paste) : []), [paste]);
   const fresh = preview.filter((p) => !assets.some((a) => a.id === p.id));
@@ -54,44 +54,38 @@ export function MagicBox({
 
   return (
     <div className="shell max-w-3xl py-12 md:py-16">
-      <Eyebrow>Step 3 of 3</Eyebrow>
-      <h1 className="font-display text-[clamp(1.8rem,4vw,2.7rem)] leading-tight">
-        The AI Magic Box
-      </h1>
-      <p className="measure mt-4 text-[1.02rem] leading-relaxed text-ink-soft">
-        Place your public digital footprint here. Everything you add is read, sorted by platform
-        and checked for duplicates so you can confirm it before anything is scored.
-      </p>
+      <Eyebrow>{t('mb.eyebrow')}</Eyebrow>
+      <h1 className="font-display text-[clamp(1.8rem,4vw,2.7rem)] leading-tight">{t('mb.h1')}</h1>
+      <p className="measure mt-4 text-[1.02rem] leading-relaxed text-ink-soft">{t('mb.sub')}</p>
 
       <div className="mt-8">
-        <Note tone="warn">
-          Public links and public business information only. Never enter passwords, private
-          dashboards, customer records, confidential documents or financial account details.
-        </Note>
+        <Note tone="warn">{t('con.warn')}</Note>
       </div>
 
       <div className="mt-8">
         <label htmlFor="paste" className="block text-[0.95rem] font-medium text-ink">
-          Paste your links, one per line or all together
+          {t('mb.label')}
         </label>
         <textarea
           id="paste"
           value={paste}
           onChange={(e) => setPaste(e.target.value)}
           rows={7}
-          placeholder={PLACEHOLDER}
+          placeholder={`${t('mb.placeholder')}\n\n${PLACEHOLDER_LINES}`}
           className="mt-2.5 w-full resize-y rounded-lg border border-line bg-white p-4 font-sans text-[0.95rem] leading-relaxed text-ink placeholder:text-ink-mute/70 focus:border-brand"
         />
         <div className="mt-3 flex flex-wrap items-center gap-3">
           <Button onClick={add} disabled={fresh.length === 0}>
-            {fresh.length > 0
-              ? `Add ${fresh.length} detected asset${fresh.length > 1 ? 's' : ''}`
-              : 'Add detected assets'}
+            {fresh.length > 0 ? t('mb.addn', { n: fresh.length }) : t('mb.add')}
           </Button>
           <span className="text-sm text-ink-mute" aria-live="polite">
             {paste.trim() === ''
-              ? 'Nothing detected yet'
-              : `${preview.length} found, ${fresh.length} new, ${preview.length - fresh.length} already added`}
+              ? t('mb.nothing')
+              : t('mb.found', {
+                  found: preview.length,
+                  fresh: fresh.length,
+                  dupe: preview.length - fresh.length,
+                })}
           </span>
         </div>
       </div>
@@ -99,16 +93,15 @@ export function MagicBox({
       <section className="mt-12" aria-labelledby="detected-heading">
         <div className="flex items-baseline justify-between gap-4 border-b border-line pb-3">
           <h2 id="detected-heading" className="font-display text-[1.3rem] text-ink">
-            Detected assets
+            {t('mb.detected')}
           </h2>
-          <span className="tnum text-sm text-ink-mute">{assets.length} confirmed</span>
+          <span className="tnum text-sm text-ink-mute">
+            {t('mb.confirmed', { n: assets.length })}
+          </span>
         </div>
 
         {assets.length === 0 ? (
-          <p className="py-8 text-[0.95rem] text-ink-mute">
-            None yet. Paste above, or continue without any links. The report will say clearly that
-            presence scores rest on your answers alone.
-          </p>
+          <p className="py-8 text-[0.95rem] text-ink-mute">{t('mb.empty')}</p>
         ) : (
           <ul className="mt-4 grid gap-2.5">
             {assets.map((a) => (
@@ -138,14 +131,14 @@ export function MagicBox({
                   {a.url}
                 </span>
                 <span className="shrink-0 rounded-full bg-surface-2 px-2.5 py-1 text-xs text-ink-soft">
-                  declared
+                  {t('mb.declared')}
                 </span>
                 <button
                   onClick={() => setAssets(assets.filter((x) => x.id !== a.id))}
                   className="shrink-0 rounded-md px-2 py-1 text-sm text-ink-mute hover:text-brand"
-                  aria-label={`Remove ${a.url}`}
+                  aria-label={`${t('btn.remove')} ${a.url}`}
                 >
-                  Remove
+                  {t('btn.remove')}
                 </button>
               </li>
             ))}
@@ -153,27 +146,21 @@ export function MagicBox({
         )}
 
         {assets.length > 0 && (
-          <p className="mt-4 text-sm leading-relaxed text-ink-mute">
-            This demonstration runs entirely in your browser, so these links are recorded as
-            declared by you and are not opened. The report states this, and your confidence level
-            reflects it.
-          </p>
+          <p className="mt-4 text-sm leading-relaxed text-ink-mute">{t('mb.note')}</p>
         )}
       </section>
 
       <section className="mt-12" aria-labelledby="context-heading">
         <h2 id="context-heading" className="font-display text-[1.3rem] text-ink">
-          Tell the analysis what you actually do
+          {t('mb.ctx.h2')}
         </h2>
-        <p className="mt-2 text-[0.95rem] text-ink-soft">
-          This text is read directly and is what the brand clarity score is built from.
-        </p>
+        <p className="mt-2 text-[0.95rem] text-ink-soft">{t('mb.ctx.sub')}</p>
 
         <div className="mt-6 grid gap-5">
           <TextArea
             id="description"
-            label="What does the business do?"
-            hint="A few sentences is plenty."
+            label={t('mb.f.desc')}
+            hint={t('mb.f.desc.h')}
             rows={3}
             value={context.description}
             onChange={(v) => setContext({ description: v })}
@@ -181,14 +168,14 @@ export function MagicBox({
           <div className="grid gap-5 sm:grid-cols-2">
             <TextArea
               id="products"
-              label="Main products or services"
+              label={t('mb.f.prod')}
               rows={2}
               value={context.productsServices}
               onChange={(v) => setContext({ productsServices: v })}
             />
             <TextArea
               id="customers"
-              label="Who are your customers?"
+              label={t('mb.f.cust')}
               rows={2}
               value={context.targetCustomers}
               onChange={(v) => setContext({ targetCustomers: v })}
@@ -197,14 +184,14 @@ export function MagicBox({
           <div className="grid gap-5 sm:grid-cols-2">
             <TextArea
               id="location"
-              label="Main location"
+              label={t('mb.f.loc')}
               rows={1}
               value={context.location}
               onChange={(v) => setContext({ location: v })}
             />
             <TextArea
               id="tagline"
-              label="Tagline, if you have one"
+              label={t('mb.f.tag')}
               rows={1}
               value={context.tagline}
               onChange={(v) => setContext({ tagline: v })}
@@ -215,9 +202,9 @@ export function MagicBox({
 
       <div className="mt-12 flex flex-wrap gap-3 border-t border-line pt-8">
         <Button variant="secondary" onClick={onBack}>
-          Back
+          {t('btn.back')}
         </Button>
-        <Button onClick={onNext}>Review and submit</Button>
+        <Button onClick={onNext}>{t('btn.review')}</Button>
       </div>
     </div>
   );

@@ -31,6 +31,13 @@ landing → consent → respondent type → survey → AI Magic Box → review �
   already present.
 - **Deterministic scoring.** Eight dimensions, versioned weights, evidence recorded per dimension.
   The same inputs always produce the same report.
+- **Four languages.** English, Bahasa Malaysia, Chinese and Iban, switchable from the
+  header pill at any point, including on a report that has already been generated. The choice
+  persists across sessions and the browser's own language seeds the first visit.
+- **Two floating bubbles.** An AI assistant on the left (24/7 badge, prepared answers to the
+  five questions respondents actually ask) and WhatsApp on the right, with a pre-filled message
+  in the active language. Both lift clear of the survey's sticky action bar and collapse to
+  icons on a phone.
 - **The snapshot.** Overall score and band, eight dimension scores with confidence, three
   strengths, three gaps, three seven-day quick wins, two AI opportunities, one priority message,
   a succession reflection, and a scope notice. "Save as PDF" prints via a dedicated print
@@ -55,6 +62,31 @@ These are the parts worth pointing at in the room. They are not decoration.
   the report mirrors the respondent's own answers back qualitatively. Succession and AI-readiness
   scores stay research-only, reported publicly in aggregate.
 
+## Languages
+
+The toggle is **EN / BM / 中 / IB**, matching the pattern used across the other KOBIS sites.
+
+Copy lives in `src/i18n/` as three dictionaries, each row ordered `[en, bm, zh, ib]`:
+
+| File | Covers |
+|---|---|
+| `dict.ui.ts` | Chrome, buttons, every screen's static copy, the assistant Q&A |
+| `dict.survey.ts` | All 27 questions, their help text, and every answer option |
+| `dict.report.ts` | Everything the scoring engine generates |
+
+The report translating is the part worth checking: the scoring engine emits each generated
+sentence twice, once as English (so the stored JSON reads on its own) and once as a translation
+key the UI resolves. That keeps the engine independent of the active language while letting
+quick wins, AI opportunities, evidence lines, the succession reflection and the scope notice all
+follow the toggle. A missing cell falls back to English rather than rendering blank.
+
+Answer *values* are stable keys (`fnb`, `yes_confirmed`), not display strings, so responses stay
+comparable across languages and survive copy edits.
+
+**Before this goes public, the Bahasa Malaysia, Chinese and Iban copy needs a native-speaker
+review pass.** It is careful work, not machine output, but it has not been checked by a native
+speaker of any of the three, and Iban in particular deserves a local reader.
+
 ## SAIC branding
 
 Off by default and controlled by one build-time flag, `VITE_SAIC_APPROVED` (see `.env.example`).
@@ -65,8 +97,10 @@ repository.** Turn the flag on and add the asset only once written approval is i
 
 ## Deploying
 
-Netlify, via the committed `netlify.toml`: build `npm run build`, publish `dist`. Set
-`VITE_SAIC_APPROVED` in the Netlify UI if and when approval lands.
+Netlify, via the committed `netlify.toml`: build `npm run build`, publish `dist`.
+
+Set `VITE_WHATSAPP_NUMBER` to FAME's real enquiry line before showing the demo publicly; the
+default is an invalid placeholder. Set `VITE_SAIC_APPROVED` if and when approval lands.
 
 ## Deliberately not in this demo
 
@@ -74,15 +108,17 @@ Scoped out to keep the demo fast to build and impossible to break in front of an
 
 Supabase and persistence · admin and research dashboards · partner dashboard · email delivery ·
 server-side PDF generation · campaign and QR tracking · authentication and roles · real fetching
-of submitted links · automated tests · multi-language support.
+of submitted links · automated tests · a live model behind the AI assistant.
 
 Responses live in `localStorage` only and are never transmitted.
 
 ## Known limitations
 
-- **Language is English only.** A production build for this audience likely needs Bahasa Malaysia,
-  and possibly Chinese. Retrofitting i18n after the survey copy is finalised is expensive, so this
-  is the decision worth making before Phase 1 starts.
+- **Translations are unreviewed.** See the Languages section above. The infrastructure is done
+  and the coverage is complete; what is missing is a native speaker's eye on BM, Chinese and Iban.
+- **The AI assistant is scripted.** Five prepared answers, labelled as such in the panel itself.
+  Wiring it to a live model is a Phase 1 task, and needs the cost ceiling and rate limiting that
+  come with it.
 - **Link verification needs a server.** Even then, Facebook, Instagram, TikTok, LinkedIn, Shopee
   and Lazada block automated fetching, so realistically only websites, Google Business Profiles and
   sometimes YouTube will ever be confirmed. The "paste your public text" fields exist because of

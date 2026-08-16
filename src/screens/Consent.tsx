@@ -1,15 +1,9 @@
 import { Button, Eyebrow, Note } from '../components/ui';
 import { branding, CONSENT_VERSION } from '../config/branding';
+import { useI18n } from '../i18n';
 import type { Consents } from '../types';
 
-const INFO: [string, string][] = [
-  ['Purpose', 'To describe how prepared Sarawak businesses are for leadership succession and for AI adoption, and to give each participant an immediate view of their own digital presence.'],
-  ['Who is organising it', `${branding.convenor}, as a research and awareness initiative.`],
-  ['What is collected', 'Your role, business profile, and views on continuity, succession, AI and digital adoption. Public business links only if you choose to add them.'],
-  ['How long it takes', 'About 7 to 10 minutes, plus a few minutes if you use the AI Magic Box.'],
-  ['How findings are used', 'Public reporting is aggregated. No individual business is identified in any published output.'],
-  ['Your control', 'You can stop at any point before submitting. Nothing is recorded until you submit.'],
-];
+const INFO = ['1', '2', '3', '4', '5', '6'];
 
 export function Consent({
   consents,
@@ -22,79 +16,72 @@ export function Consent({
   onBack: () => void;
   onNext: () => void;
 }) {
+  const { t } = useI18n();
+
   const stamp = (p: Partial<Consents>) =>
     setConsents({ ...p, timestampIso: new Date().toISOString(), version: CONSENT_VERSION });
 
   return (
     <div className="shell max-w-3xl py-12 md:py-16">
-      <Eyebrow>Before you begin</Eyebrow>
-      <h1 className="font-display text-[clamp(1.8rem,4vw,2.7rem)] leading-tight">
-        Survey information and consent
-      </h1>
+      <Eyebrow>{t('con.eyebrow')}</Eyebrow>
+      <h1 className="font-display text-[clamp(1.8rem,4vw,2.7rem)] leading-tight">{t('con.h1')}</h1>
 
       <dl className="mt-10 divide-y divide-line border-y border-line">
-        {INFO.map(([k, v]) => (
-          <div key={k} className="grid gap-1 py-5 sm:grid-cols-[10rem_1fr] sm:gap-6">
-            <dt className="text-[0.9rem] font-medium text-ink">{k}</dt>
-            <dd className="text-[0.95rem] leading-relaxed text-ink-soft">{v}</dd>
+        {INFO.map((n) => (
+          <div key={n} className="grid gap-1 py-5 sm:grid-cols-[10rem_1fr] sm:gap-6">
+            <dt className="text-[0.9rem] font-medium text-ink">{t(`con.k${n}`)}</dt>
+            <dd className="text-[0.95rem] leading-relaxed text-ink-soft">
+              {n === '2' ? `${branding.convenor}, ${t('con.v2')}` : t(`con.v${n}`)}
+            </dd>
           </div>
         ))}
       </dl>
 
       <div className="mt-8">
-        <Note tone="warn">
-          Only ever submit public links and public business information. Never enter passwords,
-          private dashboards, customer records, confidential documents or financial account
-          details.
-        </Note>
+        <Note tone="warn">{t('con.warn')}</Note>
       </div>
 
       <fieldset className="mt-10">
-        <legend className="font-display text-[1.25rem] text-ink">Your choices</legend>
-        <p className="mt-2 text-sm text-ink-mute">
-          These are recorded separately. Asking for your report does not sign you up to anything
-          else.
-        </p>
+        <legend className="font-display text-[1.25rem] text-ink">{t('con.legend')}</legend>
+        <p className="mt-2 text-sm text-ink-mute">{t('con.legend.sub')}</p>
 
         <div className="mt-6 space-y-3">
           <Checkbox
             id="consent-research"
             checked={consents.research}
             onChange={(v) => stamp({ research: v })}
-            required
-            label="I have read the survey information and voluntarily agree to participate in this research and awareness initiative."
+            label={t('con.c1')}
+            hint={t('con.required')}
           />
           <Checkbox
             id="consent-report"
             checked={consents.reportEmail}
             onChange={(v) => stamp({ reportEmail: v })}
-            label="I would like a copy of my Marketing and Digital Presence Readiness Snapshot sent to my email."
-            hint="Optional"
+            label={t('con.c2')}
+            hint={t('con.optional')}
           />
           <Checkbox
             id="consent-comms"
             checked={consents.futureComms}
             onChange={(v) => stamp({ futureComms: v })}
-            label={`I agree to receive future educational insights, business-awareness materials and programme information from ${branding.convenor}.`}
-            hint="Optional and entirely separate from the report"
+            label={`${t('con.c3')} ${branding.convenor}.`}
+            hint={t('con.c3.hint')}
           />
         </div>
       </fieldset>
 
       <p className="mt-6 text-xs text-ink-mute">
-        Consent version {CONSENT_VERSION}. Each choice is stored with its own timestamp.
+        {t('con.version')} {CONSENT_VERSION}. {t('con.stamped')}
       </p>
 
       <div className="mt-10 flex flex-wrap items-center gap-3 border-t border-line pt-8">
         <Button variant="secondary" onClick={onBack}>
-          Back
+          {t('btn.back')}
         </Button>
         <Button onClick={onNext} disabled={!consents.research}>
-          Agree and continue
+          {t('btn.agree')}
         </Button>
-        {!consents.research && (
-          <span className="text-sm text-ink-mute">The first box is required to continue.</span>
-        )}
+        {!consents.research && <span className="text-sm text-ink-mute">{t('con.needfirst')}</span>}
       </div>
     </div>
   );
@@ -106,14 +93,12 @@ function Checkbox({
   onChange,
   label,
   hint,
-  required,
 }: {
   id: string;
   checked: boolean;
   onChange: (v: boolean) => void;
   label: string;
-  hint?: string;
-  required?: boolean;
+  hint: string;
 }) {
   return (
     <label
@@ -131,9 +116,7 @@ function Checkbox({
       />
       <span>
         <span className="block text-[0.95rem] leading-relaxed text-ink">{label}</span>
-        {(hint || required) && (
-          <span className="mt-1 block text-xs text-ink-mute">{required ? 'Required' : hint}</span>
-        )}
+        <span className="mt-1 block text-xs text-ink-mute">{hint}</span>
       </span>
     </label>
   );

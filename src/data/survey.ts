@@ -1,4 +1,4 @@
-import type { Question, Section, RespondentType } from '../types';
+import type { Option, Question, Section, RespondentType } from '../types';
 
 export const SECTIONS: Section[] = [
   { id: 'profile', name: 'About you', blurb: 'Your role and experience' },
@@ -36,20 +36,21 @@ export const RESPONDENT_TYPES: {
   },
 ];
 
-const SECTOR_OPTIONS = [
-  'Food and beverage',
-  'Retail and trading',
-  'Agriculture and agri-processing',
-  'Construction and property',
-  'Manufacturing',
-  'Logistics and transport',
-  'Professional services',
-  'Tourism and hospitality',
-  'Automotive',
-  'Health and wellness',
-  'Education and training',
-  'Other',
-].map((s) => ({ value: s, label: s }));
+/** Values are stable keys so responses survive copy changes and translation. */
+const SECTOR_OPTIONS: Option[] = [
+  ['fnb', 'Food and beverage'],
+  ['retail', 'Retail and trading'],
+  ['agri', 'Agriculture and agri-processing'],
+  ['construction', 'Construction and property'],
+  ['manufacturing', 'Manufacturing'],
+  ['logistics', 'Logistics and transport'],
+  ['services', 'Professional services'],
+  ['tourism', 'Tourism and hospitality'],
+  ['automotive', 'Automotive'],
+  ['health', 'Health and wellness'],
+  ['education', 'Education and training'],
+  ['other', 'Other'],
+].map(([value, label]) => ({ value, label }));
 
 const AGREEMENT = {
   min: 1,
@@ -130,8 +131,9 @@ export const QUESTIONS: Question[] = [
       'Miri',
       'Limbang',
       'Kapit',
-      'Outside Sarawak',
-    ].map((s) => ({ value: s, label: s })),
+    ]
+      .map((s) => ({ value: s, label: s }))
+      .concat([{ value: 'outside', label: 'Outside Sarawak' }]),
   },
   {
     id: 'years_operating',

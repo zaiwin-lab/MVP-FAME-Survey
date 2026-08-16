@@ -152,7 +152,8 @@ export function Meter({
 }: {
   label: string;
   value: number;
-  confidence: 'low' | 'moderate' | 'good';
+  /** Already-translated evidence phrase, e.g. "good evidence". */
+  confidence: string;
 }) {
   return (
     <div className="print-block py-3">
@@ -170,9 +171,7 @@ export function Meter({
             style={{ width: `${value}%`, transition: 'width 0.9s var(--ease-out-expo)' }}
           />
         </div>
-        <span className="w-28 shrink-0 text-right text-xs whitespace-nowrap text-ink-mute">
-          {confidence} evidence
-        </span>
+        <span className="w-28 shrink-0 text-right text-xs text-ink-mute">{confidence}</span>
       </div>
     </div>
   );

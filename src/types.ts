@@ -88,15 +88,24 @@ export interface BusinessContext {
 
 export type Classification = 'fact' | 'inference' | 'recommendation' | 'limitation';
 
+/** Generated text carries the key that produced it so the UI can translate it. */
+export interface Localised {
+  key: string;
+  vars?: Record<string, string | number>;
+}
+
 export interface Finding {
   finding: string;
+  finding_i18n?: Localised;
   evidence: string;
+  evidence_i18n?: Localised[];
   classification: Classification;
 }
 
 export interface DimensionScore {
   dimension: string;
   key: string;
+  evidence_i18n?: Localised[];
   score: number;
   confidence: 'low' | 'moderate' | 'good';
   evidence: string[];
@@ -106,18 +115,21 @@ export interface QuickWin {
   action: string;
   why: string;
   effort: string;
+  key: string;
 }
 
 export interface AiOpportunity {
   opportunity: string;
   why: string;
+  key: string;
+  vars?: Record<string, string | number>;
 }
 
 export interface SuccessionReflection {
-  founderDependence: string;
-  documentation: string;
-  successorClarity: string;
-  note: string;
+  founderDependence: Localised;
+  documentation: Localised;
+  successorClarity: Localised;
+  note: Localised;
 }
 
 export interface Report {
@@ -133,13 +145,16 @@ export interface Report {
   confidence_level: 'low' | 'moderate' | 'good';
   overall_score: number;
   readiness_band: string;
+  readiness_band_key: string;
   dimension_scores: DimensionScore[];
   strengths: Finding[];
   gaps: Finding[];
   quick_wins: QuickWin[];
   ai_opportunities: AiOpportunity[];
   first_priority: string;
+  first_priority_i18n: Localised;
   succession_reflection: SuccessionReflection;
   limitations: string[];
+  limitations_i18n: Localised[];
   scope_notice: string;
 }

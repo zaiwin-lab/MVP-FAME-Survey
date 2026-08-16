@@ -7,8 +7,17 @@
  */
 const flag = import.meta.env.VITE_SAIC_APPROVED;
 
+/**
+ * WhatsApp destination for the floating bubble. The default is a deliberately
+ * invalid placeholder so a demo build can never dial a real stranger's line.
+ * Set VITE_WHATSAPP_NUMBER (country code, digits only) before showing it live.
+ */
+const whatsapp = import.meta.env.VITE_WHATSAPP_NUMBER || '60000000000';
+
 export const branding = {
   convenor: 'FAME International College',
+  whatsappNumber: whatsapp,
+  whatsappConfigured: whatsapp !== '60000000000',
   saicApproved: flag === 'true',
   /** Shown while approval is outstanding. Makes no endorsement claim. */
   pendingNotice: 'Strategic partnership invitation in progress',

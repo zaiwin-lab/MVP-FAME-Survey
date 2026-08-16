@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { Button } from '../components/ui';
 import { questionsFor, sectionsFor } from '../data/survey';
+import { useI18n, type T } from '../i18n';
 import type { AnswerValue, Answers, Question, RespondentType } from '../types';
 import type { SaveStatus } from '../state/store';
 
@@ -25,6 +26,7 @@ export function Survey({
   onComplete: () => void;
   saveStatus: SaveStatus;
 }) {
+  const { t } = useI18n();
   const questions = useMemo(() => questionsFor(respondentType), [respondentType]);
   const sections = useMemo(() => sectionsFor(respondentType), [respondentType]);
   const q = questions[Math.min(index, questions.length - 1)];
@@ -62,13 +64,15 @@ export function Survey({
                     i === sectionIndex ? 'text-brand' : i < sectionIndex ? 'text-ink-mute' : 'text-ink-mute/60'
                   }`}
                 >
-                  <span className={i === sectionIndex ? 'font-medium' : ''}>{s.name}</span>
+                  <span className={i === sectionIndex ? 'font-medium' : ''}>
+                    {t(`sec.${s.id}`, undefined, s.name)}
+                  </span>
                   {i < sections.length - 1 && <span aria-hidden="true">·</span>}
                 </li>
               ))}
             </ol>
             <p className="font-medium text-brand sm:hidden">
-              {sections[sectionIndex]?.name}
+              {t(`sec.${sections[sectionIndex]?.id}`, undefined, sections[sectionIndex]?.name)}
               <span className="ml-1.5 font-normal text-ink-mute">
                 {sectionIndex + 1}/{sections.length}
               </span>
@@ -78,7 +82,7 @@ export function Survey({
               aria-live="polite"
               aria-atomic="true"
             >
-              {saveStatus === 'saved' ? 'Answers saved' : 'Saving…'}
+              {saveStatus === 'saved' ? t('sv.saved') : t('sv.saving')}
             </span>
           </div>
           <div
@@ -87,7 +91,7 @@ export function Survey({
             aria-valuenow={index + 1}
             aria-valuemin={1}
             aria-valuemax={questions.length}
-            aria-label={`Question ${index + 1} of ${questions.length}`}
+            aria-label={t('sv.qof', { n: index + 1, total: questions.length })}
           >
             <div
               className="h-full rounded-full bg-brand"
@@ -99,7 +103,7 @@ export function Survey({
 
       <div className="shell w-full max-w-2xl flex-1 py-10 md:py-14">
         <p className="tnum text-sm text-ink-mute">
-          Question {index + 1} of {questions.length}
+          {t('sv.qof', { n: index + 1, total: questions.length })}
         </p>
         <h1
           ref={headingRef}
@@ -107,26 +111,30 @@ export function Survey({
           key={q.id}
           className="anim-rise mt-2 font-display text-[clamp(1.45rem,3.4vw,2.05rem)] leading-tight outline-none"
         >
-          {q.text}
+          {t(`q.${q.id}`, undefined, q.text)}
         </h1>
-        {q.help && <p className="mt-3 text-[0.95rem] leading-relaxed text-ink-soft">{q.help}</p>}
-        {q.optional && <p className="mt-2 text-sm text-ink-mute">Optional</p>}
+        {q.help && (
+          <p className="mt-3 text-[0.95rem] leading-relaxed text-ink-soft">
+            {t(`q.${q.id}.help`, undefined, q.help)}
+          </p>
+        )}
+        {q.optional && <p className="mt-2 text-sm text-ink-mute">{t('con.optional')}</p>}
 
         <div className="mt-8">
-          <Field question={q} value={answers[q.id]} onChange={(v) => setAnswer(q.id, v)} />
+          <Field question={q} value={answers[q.id]} onChange={(v) => setAnswer(q.id, v)} t={t} />
         </div>
       </div>
 
       <div className="no-print sticky bottom-0 border-t border-line-soft bg-white/94 backdrop-blur-sm">
         <div className="shell flex max-w-2xl items-center gap-3 py-4">
           <Button variant="secondary" onClick={prev}>
-            Back
+            {t('btn.back')}
           </Button>
           <Button onClick={next} disabled={!canAdvance} className="flex-1 sm:flex-none">
-            {index + 1 >= questions.length ? 'Continue to the AI Magic Box' : 'Next'}
+            {index + 1 >= questions.length ? t('btn.tomagic') : t('btn.next')}
           </Button>
           {!canAdvance && (
-            <span className="hidden text-sm text-ink-mute sm:block">Choose an answer to continue</span>
+            <span className="hidden text-sm text-ink-mute sm:block">{t('sv.choose')}</span>
           )}
         </div>
       </div>
@@ -138,16 +146,20 @@ function Field({
   question,
   value,
   onChange,
+  t,
 }: {
   question: Question;
   value: AnswerValue | undefined;
   onChange: (v: AnswerValue) => void;
+  t: T;
 }) {
+  const label = (v: string, fallback: string) => t(`o.${question.id}.${v}`, undefined, fallback);
+
   if (question.type === 'scale' && question.scale) {
     const { min, max, minLabel, maxLabel } = question.scale;
     const steps = Array.from({ length: max - min + 1 }, (_, i) => min + i);
     return (
-      <div role="radiogroup" aria-label={question.text}>
+      <div role="radiogroup" aria-label={t(`q.${question.id}`, undefined, question.text)}>
         <div className="flex gap-2">
           {steps.map((s) => {
             const active = value === s;
@@ -168,9 +180,9 @@ function Field({
             );
           })}
         </div>
-        <div className="mt-2.5 flex justify-between text-sm text-ink-mute">
-          <span>{minLabel}</span>
-          <span>{maxLabel}</span>
+        <div className="mt-2.5 flex justify-between gap-4 text-sm text-ink-mute">
+          <span>{t(`q.${question.id}.min`, undefined, minLabel)}</span>
+          <span className="text-right">{t(`q.${question.id}.max`, undefined, maxLabel)}</span>
         </div>
       </div>
     );
@@ -203,24 +215,28 @@ function Field({
                       : 'border-line bg-white text-ink hover:border-brand/60'
                 }`}
               >
-                {o.label}
+                {label(o.value, o.label)}
               </button>
             );
           })}
         </div>
         <p className="mt-3 text-sm text-ink-mute" aria-live="polite">
-          {selected.length} of {MAX_MULTI} selected
-          {atLimit && '. Deselect one to change your choices.'}
+          {t('sv.selcount', { n: selected.length, max: MAX_MULTI })}
+          {atLimit && ` ${t('sv.atlimit')}`}
         </p>
       </div>
     );
   }
 
   const options = [...(question.options ?? [])];
-  if (question.allowNotSure) options.push({ value: 'not_sure', label: 'Not sure' });
+  if (question.allowNotSure) options.push({ value: 'not_sure', label: t('o.common.not_sure') });
 
   return (
-    <div role="radiogroup" aria-label={question.text} className="grid gap-2">
+    <div
+      role="radiogroup"
+      aria-label={t(`q.${question.id}`, undefined, question.text)}
+      className="grid gap-2"
+    >
       {options.map((o) => {
         const active = value === o.value;
         return (
@@ -241,7 +257,7 @@ function Field({
             >
               {active && <span className="h-2.5 w-2.5 rounded-full bg-brand" />}
             </span>
-            {o.label}
+            {o.value === 'not_sure' ? o.label : label(o.value, o.label)}
           </button>
         );
       })}
