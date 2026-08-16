@@ -1,6 +1,14 @@
 export type RespondentType = 'founder' | 'successor' | 'manager';
 
-export type QuestionType = 'single' | 'multi' | 'scale' | 'text' | 'longtext';
+export type QuestionType =
+  | 'single'      // radio cards, for qualitative choices with longer labels
+  | 'multi'       // chips, capped selection
+  | 'scale'       // 1-5 agreement buttons
+  | 'slider'      // stepped slider across ordinal bands
+  | 'segmented'   // compact segmented control for short option sets
+  | 'select'      // dropdown, for lists too long to show as cards
+  | 'text'
+  | 'longtext';
 
 export interface Option {
   value: string;
@@ -20,6 +28,10 @@ export interface Question {
   optional?: boolean;
   /** Adds a "Not sure" escape hatch to single-choice questions. */
   allowNotSure?: boolean;
+  /** Offers "Prefer not to answer" beside a segmented control. */
+  allowDecline?: boolean;
+  /** Translation key for a footnote shown under the control. */
+  note?: string;
 }
 
 export type SectionId =

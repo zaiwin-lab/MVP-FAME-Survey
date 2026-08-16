@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react';
+import type { CSSProperties } from 'react';
 import { Button } from '../components/ui';
 import { questionsFor, sectionsFor } from '../data/survey';
 import { useI18n, type T } from '../i18n';
@@ -188,6 +189,18 @@ function Field({
     );
   }
 
+  if (question.type === 'slider') {
+    return <StepSlider question={question} value={value} onChange={onChange} t={t} label={label} />;
+  }
+
+  if (question.type === 'select') {
+    return <Dropdown question={question} value={value} onChange={onChange} t={t} label={label} />;
+  }
+
+  if (question.type === 'segmented') {
+    return <Segmented question={question} value={value} onChange={onChange} t={t} label={label} />;
+  }
+
   if (question.type === 'multi') {
     const selected = (value as string[] | undefined) ?? [];
     const atLimit = selected.length >= MAX_MULTI;
@@ -261,6 +274,167 @@ function Field({
           </button>
         );
       })}
+    </div>
+  );
+}
+
+
+type FieldProps = {
+  question: Question;
+  value: AnswerValue | undefined;
+  onChange: (v: AnswerValue) => void;
+  t: T;
+  label: (v: string, fallback: string) => string;
+};
+
+/**
+ * A slider across ordinal bands rather than a raw number line. The stops carry
+ * meaning (SME thresholds, trading-age brackets), so dragging lands on a real
+ * category instead of a number nobody can answer precisely.
+ */
+function StepSlider({ question, value, onChange, t, label }: FieldProps) {
+  const stops = question.options ?? [];
+  const answered = value !== undefined;
+  const index = answered ? Math.max(0, stops.findIndex((o) => o.value === value)) : 0;
+  const current = stops[index];
+
+  // A range input always has a value, so an untouched slider must not be read
+  // as an answer. Pointer and key release commit whatever it is resting on.
+  const commit = () => onChange(stops[index].value);
+
+  return (
+    <div>
+      <div className="flex items-baseline justify-between gap-4">
+        <p
+          className={`font-display text-[1.6rem] leading-none transition-colors ${
+            answered ? 'text-ink' : 'text-ink-mute/50'
+          }`}
+          aria-hidden="true"
+        >
+          {label(current.value, current.label)}
+        </p>
+        {!answered && <p className="text-sm text-ink-mute">{t('sv.drag')}</p>}
+      </div>
+
+      <input
+        type="range"
+        min={0}
+        max={stops.length - 1}
+        step={1}
+        value={index}
+        onChange={(e) => onChange(stops[Number(e.target.value)].value)}
+        onPointerUp={commit}
+        onKeyUp={commit}
+        aria-label={t(`q.${question.id}`, undefined, question.text)}
+        aria-valuetext={label(current.value, current.label)}
+        // The filled portion is what makes a slider read as a slider, so the
+        // track is painted up to the thumb once the question has been answered.
+        style={
+          {
+            '--fill': answered ? `${(index / (stops.length - 1)) * 100}%` : '0%',
+          } as CSSProperties
+        }
+        className={`mt-5 w-full cursor-pointer appearance-none bg-transparent
+          [&::-webkit-slider-runnable-track]:h-1.5 [&::-webkit-slider-runnable-track]:rounded-full [&::-webkit-slider-runnable-track]:bg-[linear-gradient(to_right,var(--color-brand)_var(--fill),var(--color-line)_var(--fill))]
+          [&::-moz-range-track]:h-1.5 [&::-moz-range-track]:rounded-full [&::-moz-range-track]:bg-[linear-gradient(to_right,var(--color-brand)_var(--fill),var(--color-line)_var(--fill))]
+          [&::-webkit-slider-thumb]:mt-[-0.6rem] [&::-webkit-slider-thumb]:h-7 [&::-webkit-slider-thumb]:w-7 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white [&::-webkit-slider-thumb]:shadow-[0_2px_8px_rgba(16,32,64,.3)]
+          [&::-moz-range-thumb]:h-7 [&::-moz-range-thumb]:w-7 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-white
+          ${answered ? '[&::-webkit-slider-thumb]:bg-brand [&::-moz-range-thumb]:bg-brand' : '[&::-webkit-slider-thumb]:bg-ink-mute [&::-moz-range-thumb]:bg-ink-mute'}`}
+      />
+
+      {/* Tick labels double as buttons so stop 0 is reachable without dragging. */}
+      <div className="mt-3 flex justify-between gap-1">
+        {stops.map((o, i) => (
+          <button
+            key={o.value}
+            onClick={() => onChange(o.value)}
+            className={`min-h-8 flex-1 rounded px-0.5 text-[0.7rem] leading-tight transition-colors sm:text-xs ${
+              answered && i === index ? 'font-semibold text-brand' : 'text-ink-mute hover:text-brand'
+            }`}
+          >
+            {label(o.value, o.label)}
+          </button>
+        ))}
+      </div>
+
+      {question.note && (
+        <p className="mt-5 rounded-lg border border-line bg-surface px-4 py-3 text-sm leading-relaxed text-ink-soft">
+          {t(question.note)}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** Dropdown for lists too long to render as cards without burying the page. */
+function Dropdown({ question, value, onChange, t, label }: FieldProps) {
+  const options = question.options ?? [];
+  return (
+    <div>
+      <select
+        value={(value as string) ?? ''}
+        onChange={(e) => onChange(e.target.value)}
+        aria-label={t(`q.${question.id}`, undefined, question.text)}
+        className="w-full appearance-none rounded-lg border border-line bg-white bg-[length:1.1rem] bg-[right_1rem_center] bg-no-repeat px-4 py-4 text-[1rem] text-ink focus:border-brand"
+        style={{
+          backgroundImage:
+            "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2352607a' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\")",
+        }}
+      >
+        <option value="" disabled>
+          {t('sv.choose.one')}
+        </option>
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {label(o.value, o.label)}
+          </option>
+        ))}
+      </select>
+      <p className="mt-3 text-sm text-ink-mute">
+        {t('sv.optcount', { n: options.length })}
+      </p>
+    </div>
+  );
+}
+
+/** Compact segmented control for short, mutually exclusive option sets. */
+function Segmented({ question, value, onChange, t, label }: FieldProps) {
+  const options = question.options ?? [];
+  return (
+    <div>
+      <div
+        role="radiogroup"
+        aria-label={t(`q.${question.id}`, undefined, question.text)}
+        className="flex flex-wrap gap-1.5 rounded-xl border border-line bg-surface p-1.5"
+      >
+        {options.map((o) => {
+          const active = value === o.value;
+          return (
+            <button
+              key={o.value}
+              role="radio"
+              aria-checked={active}
+              onClick={() => onChange(o.value)}
+              className={`min-h-11 flex-1 whitespace-nowrap rounded-lg px-3 text-[0.92rem] font-medium transition-colors ${
+                active ? 'bg-brand text-white' : 'text-ink-soft hover:bg-white hover:text-brand'
+              }`}
+            >
+              {label(o.value, o.label)}
+            </button>
+          );
+        })}
+      </div>
+      {question.allowDecline && (
+        <button
+          onClick={() => onChange('no_answer')}
+          aria-pressed={value === 'no_answer'}
+          className={`mt-3 text-sm underline underline-offset-4 ${
+            value === 'no_answer' ? 'font-medium text-brand' : 'text-ink-mute hover:text-brand'
+          }`}
+        >
+          {t('sv.decline')}
+        </button>
+      )}
     </div>
   );
 }

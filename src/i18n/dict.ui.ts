@@ -212,6 +212,10 @@ export const uiDict: Dict = {
   'sv.qof': ['Question {n} of {total}', 'Soalan {n} daripada {total}', '第 {n} 题，共 {total} 题', 'Tanya {n} ari {total}'],
   'sv.choose': ['Choose an answer to continue', 'Pilih jawapan untuk meneruskan', '请选择答案以继续', 'Pilih saut kena nyambung'],
   'sv.selcount': ['{n} of {max} selected', '{n} daripada {max} dipilih', '已选 {n} / {max}', '{n} ari {max} udah dipilih'],
+  'sv.drag': ['Drag to answer', 'Seret untuk menjawab', '拖动以作答', 'Tarit kena nyaut'],
+  'sv.choose.one': ['Choose one', 'Pilih satu', '请选择一项', 'Pilih siti'],
+  'sv.optcount': ['{n} options', '{n} pilihan', '共 {n} 个选项', '{n} pilih'],
+  'sv.decline': ['Prefer not to answer', 'Tidak mahu menjawab', '不愿回答', 'Enda ka nyaut'],
   'sv.atlimit': ['Deselect one to change your choices.', 'Nyahpilih satu untuk menukar pilihan anda.', '取消一项才能更改选择。', 'Buai siti kena nukar pilih nuan.'],
 
   // ---- magic box -----------------------------------------------------------
