@@ -106,6 +106,63 @@
     background-size: 46px 46px;
   }
 
+  /* Studio credit: quiet at rest, with a warm sweep passing behind the
+     wordmark on hover. The glow sits behind the text rather than clipping a
+     gradient into it, so the name stays solid and legible throughout. */
+  .credit-link {
+    position: relative;
+    display: inline-block;
+    isolation: isolate;
+    padding-inline: 0.1em;
+    color: var(--color-ink-soft);
+    font-weight: 500;
+    transition: color 0.35s var(--ease-out-quint);
+  }
+
+  .credit-link::before {
+    content: '';
+    position: absolute;
+    inset: -0.45em -0.9em;
+    z-index: -1;
+    border-radius: 999px;
+    background: radial-gradient(
+      closest-side,
+      oklch(0.84 0.14 85 / 0.62),
+      oklch(0.84 0.14 85 / 0) 72%
+    );
+    opacity: 0;
+    transform: translateX(-65%);
+    pointer-events: none;
+  }
+
+  .credit-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.18em;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-gold), var(--color-cyan));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s var(--ease-out-expo);
+  }
+
+  .credit-link:hover,
+  .credit-link:focus-visible {
+    color: var(--color-ink);
+  }
+
+  .credit-link:hover::after,
+  .credit-link:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .credit-link:hover::before,
+  .credit-link:focus-visible::before {
+    animation: sheen 1.05s var(--ease-out-quint);
+  }
+
   .rule-accent {
     height: 2px;
     width: 3rem;
@@ -128,6 +185,20 @@
 @keyframes trace {
   to {
     stroke-dashoffset: 0;
+  }
+}
+
+@keyframes sheen {
+  0% {
+    opacity: 0;
+    transform: translateX(-65%);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(65%);
   }
 }
 
@@ -160,6 +231,11 @@
   }
   .anim-rise {
     animation: none;
+  }
+  .credit-link:hover::before,
+  .credit-link:focus-visible::before {
+    animation: none;
+    opacity: 0;
   }
 }
 

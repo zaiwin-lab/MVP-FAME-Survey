@@ -87,6 +87,18 @@ comparable across languages and survive copy edits.
 review pass.** It is careful work, not machine output, but it has not been checked by a native
 speaker of any of the three, and Iban in particular deserves a local reader.
 
+## Studio credit
+
+The footer carries a quiet credit to KOBIS Berhad, linking to
+https://www.kobisberhad.com. At rest it is muted body text. On hover or keyboard
+focus the name lifts to full ink, a gold-to-cyan hairline wipes in beneath it,
+and a warm highlight sweeps once behind the wordmark.
+
+The sweep is a glow behind the text, not a gradient clipped into it, so the name
+stays solid and legible while it passes. `prefers-reduced-motion` keeps the
+underline and drops the sweep. The footer reserves a bottom lane so the floating
+bubbles never land on the credit.
+
 ## SAIC branding
 
 Off by default and controlled by one build-time flag, `VITE_SAIC_APPROVED` (see `.env.example`).

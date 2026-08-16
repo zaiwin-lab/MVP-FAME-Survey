@@ -43,7 +43,7 @@ export function Footer() {
   const { t } = useI18n();
   return (
     <footer className="no-print border-t border-line-soft bg-surface">
-      <div className="shell py-10">
+      <div className="shell pb-28 pt-10 sm:pb-24">
         <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
           <div className="max-w-md">
             <p className="text-[0.9rem] font-semibold text-ink">{branding.convenor}</p>
@@ -62,9 +62,20 @@ export function Footer() {
             ))}
           </nav>
         </div>
-        <p className="mt-8 border-t border-line pt-6 text-xs leading-relaxed text-ink-mute">
-          {t('footer.demo')}
-        </p>
+        <div className="mt-8 flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-end sm:justify-between">
+          <p className="max-w-2xl text-xs leading-relaxed text-ink-mute">{t('footer.demo')}</p>
+          <p className="shrink-0 text-xs text-ink-mute">
+            {t('footer.credit')}{' '}
+            <a
+              href="https://www.kobisberhad.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="credit-link"
+            >
+              KOBIS Berhad
+            </a>
+          </p>
+        </div>
       </div>
     </footer>
   );
