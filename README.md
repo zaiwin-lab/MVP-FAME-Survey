@@ -1,139 +1,120 @@
-# Sarawak Family Business Succession & AI Readiness Survey 2026
+# Sarawak Family Business Succession & AI Readiness Survey
 
-Demonstration build of the public survey experience, convened by FAME International College.
+> **Portfolio maturity:** Interactive Demonstration Prototype · Human-Reviewed Readiness Assessment
 
-This is the buy-in demo, not the production platform. It runs entirely in the browser so it can
-be shown anywhere, on any laptop, with no backend, no API keys and nothing that can fail live.
+A multilingual survey and decision-support experience for understanding family-business succession and AI readiness in Sarawak. The product turns structured responses into an explainable readiness snapshot while keeping evidence quality, confidence and limitations visible.
 
-## Run it
+This repository uses a permanent product identity even though the repository name retains MVP for development history.
 
-```bash
-npm install
-npm run dev          # http://localhost:5173
-npm run build        # production build into dist/
-npm run preview      # serve the production build
-```
+## Business problem
 
-## What the demo covers
+Family businesses need a practical way to discuss succession, digital capability and AI readiness without turning incomplete self-reported information into false certainty. Conventional forms collect answers but rarely give respondents an immediate, understandable next step.
 
-The complete public journey, end to end:
+## Intended users
 
-landing → consent → respondent type → survey → AI Magic Box → review → processing → snapshot → thank you
+- family-business founders;
+- next-generation successors;
+- senior managers;
+- programme and research teams reviewing aggregated readiness patterns.
 
-- **Three branching journeys.** Founder, next-generation successor, and senior manager each get a
-  different succession section. 27 questions on the founder path, roughly 8 minutes.
-- **One question per screen**, with a progress bar, section trail, back navigation, "Not sure"
-  escape hatches, and autosave to `localStorage` on every keystroke. Close the tab and the landing
-  page offers to resume.
-- **The AI Magic Box.** Paste links in any format, all at once. They are parsed, classified by
-  platform, stripped of tracking parameters, deduplicated, and shown as editable cards you confirm
-  or remove. Bare `@handles` are detected too, and suppressed when a matching profile URL is
-  already present.
-- **Deterministic scoring.** Eight dimensions, versioned weights, evidence recorded per dimension.
-  The same inputs always produce the same report.
-- **Four languages.** English, Bahasa Malaysia, Chinese and Iban, switchable from the
-  header pill at any point, including on a report that has already been generated. The choice
-  persists across sessions and the browser's own language seeds the first visit.
-- **Two floating bubbles.** An AI assistant on the left (24/7 badge, prepared answers to the
-  five questions respondents actually ask) and WhatsApp on the right, with a pre-filled message
-  in the active language. Both lift clear of the survey's sticky action bar and collapse to
-  icons on a phone.
-- **The snapshot.** Overall score and band, eight dimension scores with confidence, three
-  strengths, three gaps, three seven-day quick wins, two AI opportunities, one priority message,
-  a succession reflection, and a scope notice. "Save as PDF" prints via a dedicated print
-  stylesheet.
+## Product journey
 
-## Honesty rules the build actually enforces
+**Landing → consent → respondent path → survey → evidence review → processing → readiness snapshot → next steps**
 
-These are the parts worth pointing at in the room. They are not decoration.
+The demonstration includes:
 
-- **Nothing is fabricated.** No traffic, follower counts, engagement, rankings, revenue or
-  competitor figures appear anywhere, because none of it was measured.
-- **Declared is not verified.** A browser cannot fetch third-party pages, so every submitted link
-  is labelled `declared` and `assets_reviewed` stays at 0. Confidence is capped at *moderate*
-  while anything is unverified, however broad the evidence coverage is.
-- **Missing data is missing, never zero.** Skipped questions are recorded as absent and excluded
-  from their dimension rather than scored as a failure.
-- **Every finding is classified** as fact, inference, recommendation or limitation, and the
-  classification is shown on screen next to the finding.
-- **The report renders from a structured object**, not free text. "Show the structured output
-  behind this report" on the snapshot page reveals the exact JSON.
-- **Succession gets a reflection, not a score.** The headline promises a succession position, so
-  the report mirrors the respondent's own answers back qualitatively. Succession and AI-readiness
-  scores stay research-only, reported publicly in aggregate.
+- three branching respondent journeys for founders, successors and senior managers;
+- 27 questions on the founder path, with one question per screen and local autosave;
+- four interface languages: English, Bahasa Malaysia, Chinese and Iban;
+- link parsing and deduplication for respondent-declared public assets;
+- deterministic scoring across eight dimensions with versioned weights;
+- confidence-aware findings, strengths, gaps and seven-day quick wins;
+- structured output that labels facts, inferences, recommendations and limitations;
+- print-to-PDF support for the resulting snapshot.
 
-## Languages
+## Strategic value
 
-The toggle is **EN / BM / 中 / IB**, matching the pattern used across the other KOBIS sites.
+The product demonstrates how an assessment can become a governed decision-support journey rather than a passive form. It can help a programme team:
 
-Copy lives in `src/i18n/` as three dictionaries, each row ordered `[en, bm, zh, ib]`:
+- create a consistent front door for diverse family businesses;
+- separate declared evidence from verified evidence;
+- give respondents useful next actions without presenting a diagnosis as certainty;
+- preserve comparable structured responses across four languages;
+- prepare a responsible foundation for later research and programme dashboards.
 
-| File | Covers |
-|---|---|
-| `dict.ui.ts` | Chrome, buttons, every screen's static copy, the assistant Q&A |
-| `dict.survey.ts` | All 27 questions, their help text, and every answer option |
-| `dict.report.ts` | Everything the scoring engine generates |
+## What is implemented
 
-The report translating is the part worth checking: the scoring engine emits each generated
-sentence twice, once as English (so the stored JSON reads on its own) and once as a translation
-key the UI resolves. That keeps the engine independent of the active language while letting
-quick wins, AI opportunities, evidence lines, the succession reflection and the scope notice all
-follow the toggle. A missing cell falls back to English rather than rendering blank.
+The repository contains a React and TypeScript single-page application, multilingual dictionaries, branching survey screens, local state management, deterministic scoring logic, structured report generation, consent and review flows, and Netlify deployment configuration.
 
-Answer *values* are stable keys (`fnb`, `yes_confirmed`), not display strings, so responses stay
-comparable across languages and survive copy edits.
+### Technology
 
-**Before this goes public, the Bahasa Malaysia, Chinese and Iban copy needs a native-speaker
-review pass.** It is careful work, not machine output, but it has not been checked by a native
-speaker of any of the three, and Iban in particular deserves a local reader.
+React 18 · TypeScript · Vite · Tailwind CSS · localStorage · Netlify configuration
 
-## Studio credit
+The package version is explicitly marked as a demonstration build. No production backend, authentication service or live language model is included.
 
-The footer carries a quiet credit to KOBIS Berhad, linking to
-https://www.kobisberhad.com. At rest it is muted body text. On hover or keyboard
-focus the name lifts to full ink, a gold-to-cyan hairline wipes in beneath it,
-and a warm highlight sweeps once behind the wordmark.
+## Delivery role
 
-The sweep is a glow behind the text, not a gradient clipped into it, so the name
-stays solid and legible while it passes. `prefers-reduced-motion` keeps the
-underline and drops the sweep. The footer reserves a bottom lane so the floating
-bubbles never land on the credit.
+**Ts. Zaiwin Kassim** leads product strategy, stakeholder requirements, solution architecture and supervised AI-assisted delivery with the **KOBIS AI Prodigy Team**. In this project, that role covers the assessment journey, explainability rules, multilingual product direction and responsible-use boundaries.
 
-## SAIC branding
+This portfolio attribution does not imply commissioning, deployment, endorsement or partnership by any third party beyond evidence explicitly documented in the repository.
 
-Off by default and controlled by one build-time flag, `VITE_SAIC_APPROVED` (see `.env.example`).
+## Responsible-use design
 
-While it is off, the header reads "Strategic partnership invitation in progress" and no SAIC name,
-logo, endorsement or partnership claim renders anywhere. **No SAIC logo file is committed to this
-repository.** Turn the flag on and add the asset only once written approval is in hand.
+The demonstration intentionally applies the following controls:
 
-## Deploying
+- respondent-submitted links are labelled as declared, not verified;
+- missing answers remain missing instead of being converted to zero;
+- confidence is capped when evidence has not been reviewed;
+- each generated statement is classified as fact, inference, recommendation or limitation;
+- succession is reflected qualitatively rather than reduced to a definitive score;
+- responses stay in the browser and are not transmitted;
+- no traffic, revenue, ranking, competitor or social metrics are invented.
 
-Netlify, via the committed `netlify.toml`: build `npm run build`, publish `dist`.
+The output is an initial readiness reflection, not professional legal, financial, employment or succession advice. Material decisions require human review and appropriate professional input.
 
-Set `VITE_WHATSAPP_NUMBER` to FAME's real enquiry line before showing the demo publicly; the
-default is an invalid placeholder. Set `VITE_SAIC_APPROVED` if and when approval lands.
+## Current limitations
 
-## Deliberately not in this demo
+- **No production data layer:** responses persist only in localStorage.
+- **No authentication or programme dashboard:** administrative and research workflows are out of scope.
+- **No live AI model:** the assistant uses prepared answers and the readiness engine is deterministic.
+- **No automated third-party verification:** submitted links remain self-declared.
+- **Translations require review:** Bahasa Malaysia, Chinese and especially Iban copy need native-speaker validation before public use.
+- **No automated test suite is documented:** build and type-check scripts exist, but production assurance is not claimed.
+- **No verified public demo URL is documented:** this README does not publish an unverified deployment link.
 
-Scoped out to keep the demo fast to build and impossible to break in front of an audience:
+## Run locally
 
-Supabase and persistence · admin and research dashboards · partner dashboard · email delivery ·
-server-side PDF generation · campaign and QR tracking · authentication and roles · real fetching
-of submitted links · automated tests · a live model behind the AI assistant.
+Requirements: Node.js and npm.
 
-Responses live in `localStorage` only and are never transmitted.
+    npm install
+    npm run dev
+    npm run typecheck
+    npm run build
+    npm run preview
 
-## Known limitations
+The local development server is normally available at http://localhost:5173.
 
-- **Translations are unreviewed.** See the Languages section above. The infrastructure is done
-  and the coverage is complete; what is missing is a native speaker's eye on BM, Chinese and Iban.
-- **The AI assistant is scripted.** Five prepared answers, labelled as such in the panel itself.
-  Wiring it to a live model is a Phase 1 task, and needs the cost ceiling and rate limiting that
-  come with it.
-- **Link verification needs a server.** Even then, Facebook, Instagram, TikTok, LinkedIn, Shopee
-  and Lazada block automated fetching, so realistically only websites, Google Business Profiles and
-  sometimes YouTube will ever be confirmed. The "paste your public text" fields exist because of
-  this and should stay first-class.
-- **The 7-to-10-minute claim holds for this question set.** The full instrument in the original
-  brief is roughly 100 to 180 questions and would take 25 to 35 minutes.
+## Deployment notes
+
+The committed Netlify configuration builds with npm run build and publishes the generated dist directory.
+
+Before any public pilot:
+
+1. complete native-speaker review for all non-English copy;
+2. replace the placeholder WhatsApp setting with an approved enquiry number;
+3. confirm consent, retention and research-governance requirements;
+4. add a secure backend only after access controls and data minimisation are defined;
+5. activate any third-party branding only after written approval.
+
+## Repository map
+
+- **src/screens** — respondent journey and report screens
+- **src/i18n** — multilingual interface, survey and report dictionaries
+- **src/state** — browser-side state and persistence
+- **src/lib** — scoring and supporting logic
+- **src/types.ts** — structured domain types
+- **netlify.toml** — static deployment configuration
+
+## Portfolio evidence
+
+This repository demonstrates product strategy, multilingual UX, explainable scoring, structured AI-readiness outputs and responsible prototype boundaries. It should be evaluated as an interactive demonstration prototype, not as a deployed research platform or validated diagnostic instrument.
