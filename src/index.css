@@ -1,0 +1,176 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Ink ramp — deep navy typography */
+  --color-ink: oklch(0.25 0.055 252);
+  --color-ink-soft: oklch(0.42 0.045 250);
+  --color-ink-mute: oklch(0.52 0.032 248);
+
+  /* Structure */
+  --color-line: oklch(0.905 0.018 235);
+  --color-line-soft: oklch(0.945 0.012 230);
+  --color-surface: oklch(0.984 0.011 220);
+  --color-surface-2: oklch(0.962 0.023 216);
+
+  /* Brand — medium blue carries identity, cyan carries data */
+  --color-brand: oklch(0.5 0.145 250);
+  --color-brand-deep: oklch(0.35 0.115 254);
+  --color-brand-tint: oklch(0.94 0.032 245);
+  --color-cyan: oklch(0.72 0.142 212);
+  --color-cyan-deep: oklch(0.56 0.128 217);
+  --color-gold: oklch(0.76 0.108 82);
+  --color-gold-deep: oklch(0.56 0.095 75);
+
+  /* Signal colors for report bands */
+  --color-signal-strong: oklch(0.55 0.115 165);
+  --color-signal-warn: oklch(0.62 0.125 65);
+
+  --font-display: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Semantic z-index scale */
+@layer base {
+  :root {
+    --z-sticky: 20;
+    --z-overlay: 40;
+    --z-toast: 60;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: #fff;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+    color: var(--color-ink);
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Numerals align in score tables */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .measure {
+    max-width: 68ch;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: 74rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .shell {
+      padding-inline: 2rem;
+    }
+  }
+
+  /* Fine AI-inspired grid, used as a section ground rather than decoration */
+  .grid-ground {
+    background-image:
+      linear-gradient(to right, oklch(0.5 0.145 250 / 0.055) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(0.5 0.145 250 / 0.055) 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+
+  .rule-accent {
+    height: 2px;
+    width: 3rem;
+    background: linear-gradient(90deg, var(--color-cyan) 0%, var(--color-brand) 100%);
+  }
+}
+
+/* Motion — every animation has a reduced-motion path */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes trace {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes pulse-node {
+  0%,
+  100% {
+    opacity: 0.4;
+    r: 1.5;
+  }
+  50% {
+    opacity: 1;
+    r: 2.2;
+  }
+}
+
+.anim-rise {
+  animation: rise 0.5s var(--ease-out-quint) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .anim-rise {
+    animation: none;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+  }
+  .print-block {
+    break-inside: avoid;
+  }
+}
