@@ -28,8 +28,13 @@ export function Survey({
   saveStatus: SaveStatus;
 }) {
   const { t } = useI18n();
-  const questions = useMemo(() => questionsFor(respondentType), [respondentType]);
-  const sections = useMemo(() => sectionsFor(respondentType), [respondentType]);
+  // Conditional questions appear and disappear as earlier answers change, so
+  // both the list and the section trail are derived from the current answers.
+  const questions = useMemo(
+    () => questionsFor(respondentType, answers),
+    [respondentType, answers],
+  );
+  const sections = useMemo(() => sectionsFor(respondentType, answers), [respondentType, answers]);
   const q = questions[Math.min(index, questions.length - 1)];
   const headingRef = useRef<HTMLHeadingElement>(null);
 
@@ -122,7 +127,7 @@ export function Survey({
         {q.optional && <p className="mt-2 text-sm text-ink-mute">{t('con.optional')}</p>}
 
         <div className="mt-8">
-          <Field question={q} value={answers[q.id]} onChange={(v) => setAnswer(q.id, v)} t={t} />
+          <Field question={q} value={answers[q.id]} onChange={(v) => setAnswer(q.id, v)} t={t} answers={answers} />
         </div>
       </div>
 
@@ -148,11 +153,13 @@ function Field({
   value,
   onChange,
   t,
+  answers,
 }: {
   question: Question;
   value: AnswerValue | undefined;
   onChange: (v: AnswerValue) => void;
   t: T;
+  answers: Answers;
 }) {
   const label = (v: string, fallback: string) => t(`o.${question.id}.${v}`, undefined, fallback);
 
@@ -203,11 +210,14 @@ function Field({
 
   if (question.type === 'multi') {
     const selected = (value as string[] | undefined) ?? [];
-    const atLimit = selected.length >= MAX_MULTI;
+    const choices = question.dynamicOptions?.(answers) ?? question.options ?? [];
+    // A cap wider than the list on offer would read as a wrong denominator.
+    const cap = Math.min(question.maxSelect ?? MAX_MULTI, choices.length);
+    const atLimit = selected.length >= cap;
     return (
       <div>
         <div className="grid gap-2 sm:grid-cols-2">
-          {question.options!.map((o) => {
+          {choices.map((o) => {
             const active = selected.includes(o.value);
             const blocked = atLimit && !active;
             return (
@@ -234,7 +244,7 @@ function Field({
           })}
         </div>
         <p className="mt-3 text-sm text-ink-mute" aria-live="polite">
-          {t('sv.selcount', { n: selected.length, max: MAX_MULTI })}
+          {t('sv.selcount', { n: selected.length, max: cap })}
           {atLimit && ` ${t('sv.atlimit')}`}
         </p>
       </div>

@@ -24,7 +24,9 @@ Family businesses need a practical way to discuss succession, digital capability
 The demonstration includes:
 
 - three branching respondent journeys for founders, successors and senior managers;
-- 28 questions on each respondent path, with one question per screen and local autosave;
+- 29 questions on each respondent path, with one question per screen and local autosave;
+- conditional follow-ups, so a multi-site business is asked which other divisions it operates in
+  while a single-site business never sees the question;
 - four interface languages: English, Bahasa Malaysia, Chinese and Iban;
 - input controls matched to each question: stepped sliders on ordinal bands, dropdowns for long
   lists, segmented controls, rating scales and capped multi-select;

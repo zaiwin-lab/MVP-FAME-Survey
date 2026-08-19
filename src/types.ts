@@ -32,6 +32,12 @@ export interface Question {
   allowDecline?: boolean;
   /** Translation key for a footnote shown under the control. */
   note?: string;
+  /** Shown only when this predicate passes against the answers so far. */
+  showIf?: (answers: Answers) => boolean;
+  /** Selection cap for multi-select. Defaults to the shared limit. */
+  maxSelect?: number;
+  /** Options derived from earlier answers, e.g. excluding one already chosen. */
+  dynamicOptions?: (answers: Answers) => Option[];
 }
 
 export type SectionId =

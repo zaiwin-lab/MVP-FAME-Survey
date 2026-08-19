@@ -28,7 +28,7 @@ export function Review({
   onSubmit: () => void;
 }) {
   const { t } = useI18n();
-  const questions = questionsFor(respondentType);
+  const questions = questionsFor(respondentType, answers);
   const answeredCount = questions.filter((q) => answers[q.id] !== undefined).length;
   const rt = RESPONDENT_TYPES.find((r) => r.id === respondentType);
   const typeLabel = rt ? t(`rt.${rt.id}.title`, undefined, rt.title) : '';

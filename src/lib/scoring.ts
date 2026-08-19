@@ -366,9 +366,14 @@ function buildQuickWins(
   const add = (rank: number, key: string, action: string, why: string, effort: string) =>
     pool.push({ rank, key, action, why, effort });
 
+  // Every extra site is another place a customer can fail to find, so an
+  // unclaimed map profile and mismatched details cost a multi-branch business
+  // more than a single-site one.
+  const multiSite = answers['branches'] !== undefined && answers['branches'] !== '1';
+
   if (!platforms.has('google_business')) {
     add(
-      100 - score('discoverability'),
+      (multiSite ? 115 : 100) - score('discoverability'),
       'gbp',
       'Claim and complete your Google Business Profile.',
       'It is the first thing most customers see when they search your name or your trade in your area, and it is free.',
@@ -421,7 +426,7 @@ function buildQuickWins(
     );
   }
   add(
-    40,
+    multiSite ? 75 : 40,
     'nap',
     'Put the same business name, phone number and address on every channel, character for character.',
     'Search engines treat mismatched details as different businesses, which splits your visibility.',

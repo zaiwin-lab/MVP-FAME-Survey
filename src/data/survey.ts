@@ -1,4 +1,4 @@
-import type { Option, Question, Section, RespondentType } from '../types';
+import type { Answers, Option, Question, Section, RespondentType } from '../types';
 
 export const SECTIONS: Section[] = [
   { id: 'profile', name: 'About you', blurb: 'Your role and experience' },
@@ -51,6 +51,23 @@ const SECTOR_OPTIONS: Option[] = [
   ['education', 'Education and training'],
   ['other', 'Other'],
 ].map(([value, label]) => ({ value, label }));
+
+const DIVISION_OPTIONS: Option[] = [
+  'Kuching',
+  'Samarahan',
+  'Serian',
+  'Sri Aman',
+  'Betong',
+  'Sarikei',
+  'Sibu',
+  'Mukah',
+  'Bintulu',
+  'Miri',
+  'Limbang',
+  'Kapit',
+]
+  .map((s) => ({ value: s, label: s }))
+  .concat([{ value: 'outside', label: 'Outside Sarawak' }]);
 
 const AGREEMENT = {
   min: 1,
@@ -117,23 +134,35 @@ export const QUESTIONS: Question[] = [
     id: 'division',
     section: 'business',
     text: 'Where in Sarawak is the business mainly based?',
+    help: 'The main site, if you operate from more than one.',
     type: 'select',
+    options: DIVISION_OPTIONS,
+  },
+  {
+    id: 'branches',
+    section: 'business',
+    text: 'How many locations does the business operate from?',
+    help: 'Count shops, outlets, branches, workshops or offices.',
+    type: 'segmented',
     options: [
-      'Kuching',
-      'Samarahan',
-      'Serian',
-      'Sri Aman',
-      'Betong',
-      'Sarikei',
-      'Sibu',
-      'Mukah',
-      'Bintulu',
-      'Miri',
-      'Limbang',
-      'Kapit',
-    ]
-      .map((s) => ({ value: s, label: s }))
-      .concat([{ value: 'outside', label: 'Outside Sarawak' }]),
+      { value: '1', label: 'One' },
+      { value: '2_3', label: '2 to 3' },
+      { value: '4_10', label: '4 to 10' },
+      { value: 'gt10', label: 'More than 10' },
+    ],
+  },
+  {
+    id: 'other_divisions',
+    section: 'business',
+    text: 'Which other divisions do you operate in?',
+    help: 'Choose every division with a branch, outlet or site.',
+    type: 'multi',
+    maxSelect: DIVISION_OPTIONS.length,
+    // Only worth asking once the respondent has said there is more than one site.
+    showIf: (a) => a.branches !== undefined && a.branches !== '1',
+    // The main location is already recorded, so it is dropped from the list.
+    dynamicOptions: (a) => DIVISION_OPTIONS.filter((o) => o.value !== a.division),
+    options: DIVISION_OPTIONS,
   },
   {
     id: 'years_operating',
@@ -488,11 +517,13 @@ export const QUESTIONS: Question[] = [
   },
 ];
 
-export function questionsFor(type: RespondentType): Question[] {
-  return QUESTIONS.filter((q) => !q.showFor || q.showFor.includes(type));
+export function questionsFor(type: RespondentType, answers: Answers = {}): Question[] {
+  return QUESTIONS.filter(
+    (q) => (!q.showFor || q.showFor.includes(type)) && (!q.showIf || q.showIf(answers)),
+  );
 }
 
-export function sectionsFor(type: RespondentType): Section[] {
-  const live = new Set(questionsFor(type).map((q) => q.section));
+export function sectionsFor(type: RespondentType, answers: Answers = {}): Section[] {
+  const live = new Set(questionsFor(type, answers).map((q) => q.section));
   return SECTIONS.filter((s) => live.has(s.id));
 }
