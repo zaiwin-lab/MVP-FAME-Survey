@@ -83,7 +83,7 @@ The output is an initial readiness reflection, not professional legal, financial
 - **No live AI model:** the assistant uses prepared answers and the readiness engine is deterministic.
 - **No automated third-party verification:** submitted links remain self-declared.
 - **Translations reviewed, not independently certified:** the Bahasa Malaysia, Chinese and Iban copy has been read and accepted by the delivery lead. It has not been through a certified translation review.
-- **No automated test suite is documented:** build and type-check scripts exist, but production assurance is not claimed.
+- **Test coverage is behavioural, not exhaustive:** an end-to-end suite covers the critical flows and the responsible-use guarantees. There are no unit tests, and production assurance is not claimed.
 - **No verified public demo URL is documented:** this README does not publish an unverified deployment link.
 
 ## Run locally
@@ -95,6 +95,11 @@ Requirements: Node.js and npm.
     npm run typecheck
     npm run build
     npm run preview
+    npm run e2e
+
+The end-to-end suite drives the production build in Chromium at desktop and mobile sizes.
+Install the browser once with `npx playwright install chromium`. Where Chromium is already on
+disk, set `PW_CHROMIUM_PATH` to its binary and no download is needed.
 
 The local development server is normally available at http://localhost:5173.
 
@@ -117,6 +122,7 @@ Before any public pilot:
 - **src/state** — browser-side state and persistence
 - **src/lib** — scoring and supporting logic
 - **src/types.ts** — structured domain types
+- **e2e** — end-to-end specs covering the journey, controls, branching, languages and guarantees
 - **netlify.toml** — static deployment configuration
 
 ## Portfolio evidence
