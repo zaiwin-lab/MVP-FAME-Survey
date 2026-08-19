@@ -376,6 +376,12 @@ export const uiDict: Dict = {
   'fab.ai.sub': ['Available 24/7. Choose a question below.', 'Tersedia 24/7. Pilih soalan di bawah.', '24 小时可用。请选择下方问题。', 'Bisi 24/7. Pilih tanya ba baruh.'],
   'fab.ai.demo': ['Demonstration assistant with prepared answers. The production build connects to a live model.', 'Pembantu demonstrasi dengan jawapan sedia ada. Binaan sebenar disambung kepada model langsung.', '演示助手，答案为预设内容。正式版本将连接实时模型。', 'Penulung demonstrasi enggau saut ti udah disedia. Bagi ti amat disambung ngagai model idup.'],
   'fab.wa': ['WhatsApp us', 'WhatsApp kami', 'WhatsApp 联系我们', 'WhatsApp kami'],
+  'fab.wa.soon': [
+    'WhatsApp enquiries open when this survey goes live.',
+    'Pertanyaan WhatsApp dibuka apabila kaji selidik ini disiarkan.',
+    'WhatsApp 咨询将在调查正式上线后开放。',
+    'Tanya ngena WhatsApp dibuka lebuh tinjau tu udah bejalai.',
+  ],
   'fab.wa.msg': [
     'Hello FAME, I have a question about the Succession & AI Readiness Survey 2026.',
     'Helo FAME, saya ada soalan tentang Kaji Selidik Pewarisan & Kesediaan AI 2026.',

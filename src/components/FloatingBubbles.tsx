@@ -4,6 +4,9 @@ import { branding } from '../config/branding';
 
 const FAQ_KEYS = ['1', '2', '3', '4', '5'];
 
+const BUBBLE_WA =
+  'flex h-14 items-center gap-2.5 rounded-full px-4 text-white shadow-[0_10px_26px_-8px_rgba(18,140,70,.7)] transition-[transform,background-color] duration-200 hover:bg-[#1fbd5a] active:scale-95 sm:pr-5';
+
 function RobotIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden="true" fill="none">
@@ -42,6 +45,7 @@ export function FloatingBubbles({ lifted }: { lifted: boolean }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string | null>(null);
+  const [waNotice, setWaNotice] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -135,18 +139,42 @@ export function FloatingBubbles({ lifted }: { lifted: boolean }) {
         </button>
       </div>
 
-      {/* Right: WhatsApp */}
-      <a
-        href={waHref}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={t('fab.wa')}
-        className={`fixed right-4 z-40 flex h-14 items-center gap-2.5 rounded-full pl-4 pr-4 text-white shadow-[0_10px_26px_-8px_rgba(18,140,70,.7)] transition-[transform,background-color] duration-200 hover:bg-[#1fbd5a] active:scale-95 sm:right-5 sm:pr-5 ${offset}`}
-        style={{ backgroundColor: '#25D366' }}
-      >
-        <WhatsAppIcon />
-        <span className="hidden text-[0.82rem] font-semibold sm:block">{t('fab.wa')}</span>
-      </a>
+      {/* Right: WhatsApp. Until a real number is configured this must not open
+          a dead wa.me link, so it says so instead of leading nowhere. */}
+      <div className={`fixed right-4 z-40 sm:right-5 ${offset} transition-[bottom] duration-300`}>
+        {waNotice && (
+          <p
+            role="status"
+            className="anim-rise absolute bottom-16 right-0 w-[min(15rem,calc(100vw-2rem))] rounded-lg border border-line bg-white px-4 py-3 text-sm leading-relaxed text-ink-soft shadow-[0_14px_34px_-12px_rgba(16,32,64,.3)]"
+          >
+            {t('fab.wa.soon')}
+          </p>
+        )}
+        {branding.whatsappConfigured ? (
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={t('fab.wa')}
+            className={BUBBLE_WA}
+            style={{ backgroundColor: '#25D366' }}
+          >
+            <WhatsAppIcon />
+            <span className="hidden text-[0.82rem] font-semibold sm:block">{t('fab.wa')}</span>
+          </a>
+        ) : (
+          <button
+            onClick={() => setWaNotice((v) => !v)}
+            aria-expanded={waNotice}
+            aria-label={t('fab.wa')}
+            className={BUBBLE_WA}
+            style={{ backgroundColor: '#25D366' }}
+          >
+            <WhatsAppIcon />
+            <span className="hidden text-[0.82rem] font-semibold sm:block">{t('fab.wa')}</span>
+          </button>
+        )}
+      </div>
     </div>
   );
 }
