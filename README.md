@@ -24,8 +24,10 @@ Family businesses need a practical way to discuss succession, digital capability
 The demonstration includes:
 
 - three branching respondent journeys for founders, successors and senior managers;
-- 27 questions on the founder path, with one question per screen and local autosave;
+- 28 questions on each respondent path, with one question per screen and local autosave;
 - four interface languages: English, Bahasa Malaysia, Chinese and Iban;
+- input controls matched to each question: stepped sliders on ordinal bands, dropdowns for long
+  lists, segmented controls, rating scales and capped multi-select;
 - link parsing and deduplication for respondent-declared public assets;
 - deterministic scoring across eight dimensions with versioned weights;
 - confidence-aware findings, strengths, gaps and seven-day quick wins;
@@ -101,7 +103,7 @@ The committed Netlify configuration builds with npm run build and publishes the 
 Before any public pilot:
 
 1. complete native-speaker review for all non-English copy;
-2. replace the placeholder WhatsApp setting with an approved enquiry number;
+2. set an approved WhatsApp enquiry number, which converts the bubble from an at-launch notice into a live link;
 3. confirm consent, retention and research-governance requirements;
 4. add a secure backend only after access controls and data minimisation are defined;
 5. activate any third-party branding only after written approval.
