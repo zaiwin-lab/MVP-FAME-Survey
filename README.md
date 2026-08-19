@@ -82,7 +82,7 @@ The output is an initial readiness reflection, not professional legal, financial
 - **No authentication or programme dashboard:** administrative and research workflows are out of scope.
 - **No live AI model:** the assistant uses prepared answers and the readiness engine is deterministic.
 - **No automated third-party verification:** submitted links remain self-declared.
-- **Translations require review:** Bahasa Malaysia, Chinese and especially Iban copy need native-speaker validation before public use.
+- **Translations reviewed, not independently certified:** the Bahasa Malaysia, Chinese and Iban copy has been read and accepted by the delivery lead. It has not been through a certified translation review.
 - **No automated test suite is documented:** build and type-check scripts exist, but production assurance is not claimed.
 - **No verified public demo URL is documented:** this README does not publish an unverified deployment link.
 
@@ -104,7 +104,7 @@ The committed Netlify configuration builds with npm run build and publishes the 
 
 Before any public pilot:
 
-1. complete native-speaker review for all non-English copy;
+1. confirm the non-English copy against its final published wording;
 2. set an approved WhatsApp enquiry number, which converts the bubble from an at-launch notice into a live link;
 3. confirm consent, retention and research-governance requirements;
 4. add a secure backend only after access controls and data minimisation are defined;
