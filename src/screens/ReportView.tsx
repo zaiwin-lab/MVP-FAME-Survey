@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Dial, Eyebrow, Meter } from '../components/ui';
+import { branding } from '../config/branding';
 import { useI18n, type T } from '../i18n';
 import type { Localised, Report } from '../types';
 
@@ -166,6 +167,12 @@ export function ReportView({
           {t('rp.email.note', { email: email || t('rp.your.email') })}
         </p>
       )}
+
+      {/* Colophon. The PDF leaves this site, so it carries its own provenance. */}
+      <p className="mt-10 hidden border-t border-line pt-4 text-xs text-ink-mute print:block">
+        &copy; {new Date().getFullYear()} {branding.convenor}. {t('footer.rights')}{' '}
+        {t('footer.credit')} KOBIS Berhad.
+      </p>
 
       {/* Structured output — the report is rendered from validated JSON, not free text */}
       <section className="no-print mt-12 border-t border-line pt-8">

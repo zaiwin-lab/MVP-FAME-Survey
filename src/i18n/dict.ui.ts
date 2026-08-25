@@ -19,6 +19,7 @@ export const uiDict: Dict = {
   'footer.terms': ['Terms of participation', 'Terma penyertaan', '参与条款', 'Atur enggau nyerta'],
   'footer.a11y': ['Accessibility statement', 'Penyata kebolehcapaian', '无障碍声明', 'Penyata mudah dikena'],
   'footer.credit': ['Designed and built by', 'Direka dan dibina oleh', '设计与开发', 'Direka lalu digaga ulih'],
+  'footer.rights': ['All rights reserved.', 'Hak cipta terpelihara.', '版权所有。', 'Semua hak disimpan.'],
   'footer.demo': [
     'Demonstration build. Responses are stored only in this browser and are not transmitted anywhere. Individual answers stay private; public findings are reported in aggregate only.',
     'Binaan demonstrasi. Jawapan disimpan dalam pelayar ini sahaja dan tidak dihantar ke mana-mana. Jawapan individu kekal peribadi; penemuan awam dilaporkan secara agregat sahaja.',

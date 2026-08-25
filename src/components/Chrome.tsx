@@ -41,6 +41,7 @@ function PartnerMark() {
 
 export function Footer() {
   const { t } = useI18n();
+  const year = new Date().getFullYear();
   return (
     <footer className="no-print border-t border-line-soft bg-surface">
       <div className="shell pb-28 pt-10 sm:pb-24">
@@ -63,7 +64,12 @@ export function Footer() {
           </nav>
         </div>
         <div className="mt-8 flex flex-col gap-4 border-t border-line pt-6 sm:flex-row sm:items-end sm:justify-between">
-          <p className="max-w-2xl text-xs leading-relaxed text-ink-mute">{t('footer.demo')}</p>
+          <div className="max-w-2xl">
+            <p className="text-xs leading-relaxed text-ink-mute">{t('footer.demo')}</p>
+            <p className="mt-3 text-xs text-ink-mute">
+              &copy; {year} {branding.convenor}. {t('footer.rights')}
+            </p>
+          </div>
           <p className="shrink-0 text-xs text-ink-mute">
             {t('footer.credit')}{' '}
             <a

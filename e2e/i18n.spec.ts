@@ -23,6 +23,19 @@ test.describe('four languages', () => {
     await expect(page.getByRole('button', { name: LANGUAGES[0].cta }).first()).toBeVisible();
   });
 
+  test('the footer copyright follows the language toggle', async ({ page }) => {
+    await page.goto('/');
+    const footer = page.getByRole('contentinfo');
+    await expect(
+      footer.getByText(/\u00a9 \d{4} FAME International College\. All rights reserved\./),
+    ).toBeVisible();
+
+    await page.getByRole('button', { name: 'Bahasa Malaysia' }).first().click();
+    await expect(
+      footer.getByText(/\u00a9 \d{4} FAME International College\. Hak cipta terpelihara\./),
+    ).toBeVisible();
+  });
+
   test('a generated report re-renders when the language changes', async ({ page }) => {
     await startSurvey(page, 'founder');
     await completeSurvey(page);
